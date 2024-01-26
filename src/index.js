@@ -1,24 +1,30 @@
-const Server = require('./configuration/server');
-const MongoDBClient = require('./configuration/database');
+/* eslint-disable no-console */
+import Server from './configuration/server';
+import Database from './configuration/database';
+import routes from './routes';
 
-MongoDBClient.mongoose
-  .connect(MongoDBClient.URL, {
+// Database initialization...
+
+Database.mongoose
+  .connect(Database.URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
   })
   .then(() => {
-    console.log('MongoDB database connected');
+    console.info('MongoDB database connected');
   })
   .catch((error) => {
-    console.log('Error trying to connect the MongoDB database', error);
+    console.info('Error trying to connect the MongoDB database', error);
     process.exit();
   });
 
-const routes = require('./routes');
+// Server initialization...
+
+const port = Server.get('port');
 
 Server.use(`/api/${process.env.API_VERSION}`, routes);
 Server.set('port', process.env.PORT || process.env.SERVER_PORT);
-Server.listen(Server.get('port'), () => {
-  console.log(`API server listening on port ${Server.get('port')}`);
+Server.listen(port, () => {
+  console.info(`API server listening on port ${port}`);
 });
