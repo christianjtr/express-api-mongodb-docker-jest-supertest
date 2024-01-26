@@ -1,7 +1,6 @@
 import HTTPStatus from 'http-status';
 import Joi from '@hapi/joi';
-import { couriers as Couriers } from '../models';
-
+import { CourierModel } from '../models';
 // #region Validations...
 
 export async function checkId(req, _, next) {
@@ -65,7 +64,7 @@ export async function validateLookupQueryParams(req, _, next) {
 
 export async function findAll(_, res) {
   try {
-    const couriers = await Couriers.findAll();
+    const couriers = await CourierModel.findAll();
 
     res.status(HTTPStatus.OK).send(couriers);
   } catch (error) {
@@ -81,7 +80,7 @@ export async function findById(req, res) {
   try {
     const { courierId } = req.safeFields;
 
-    const courier = await Couriers.find({
+    const courier = await CourierModel.find({
       id: courierId,
     });
 
@@ -107,7 +106,7 @@ export async function create(req, res) {
   try {
     const { maxCapacity } = req.safeFields;
 
-    const newCourier = await new Couriers({
+    const newCourier = await new CourierModel({
       max_capacity: maxCapacity,
     })
       .save();
@@ -126,7 +125,7 @@ export async function updateById(req, res) {
   try {
     const { courierId, maxCapacity } = req.safeFields;
 
-    const updatedCourier = await Couriers.findOneAndUpdate({
+    const updatedCourier = await CourierModel.findOneAndUpdate({
       id: courierId,
     }, {
       $set: {
@@ -157,7 +156,7 @@ export async function deleteById(req, res) {
   try {
     const { courierId } = req.safeFields;
 
-    const deletedCourier = await Couriers.findOneAndRemove({
+    const deletedCourier = await CourierModel.findOneAndRemove({
       id: courierId,
     });
 
@@ -185,7 +184,7 @@ export async function lookupByAvailableSpace(req, res) {
   try {
     const { capacityRequired } = req.safeFields;
 
-    const couriers = await Couriers.find({
+    const couriers = await CourierModel.find({
       max_capacity: {
         $gte: capacityRequired,
       },

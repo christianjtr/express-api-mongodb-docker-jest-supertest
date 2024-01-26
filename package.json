@@ -1,29 +1,28 @@
 {
-  "name": "rest-api-test",
-  "version": "1.0.0",
-  "description": "Rest API Test",
-  "main": "index.js",
-  "author": "Christian Torrealba",
-  "private": true,
-  "scripts": {
-    "server:prod": "node -r dotenv/config src/index.js dotenv_config_path=./.env.production",
-    "server:dev": "nodemon -r dotenv/config src/index.js"
-  },
-  "keywords": [],
-  "license": "ISC",
-  "dependencies": {
-    "@hapi/joi": "^17.1.1",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "http-status": "^1.7.3",
-    "mongodb": "^3.5.9",
-    "mongoose": "^5.9.25",
-    "morgan": "^1.10.0",
-    "nodemon": "^2.0.4"
-  },
-  "devDependencies": {
-    "eslint": "^7.4.0",
-    "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.22.0"
-  }
+    "name": "couriers-rest-api-test",
+    "version": "1.0.0",
+    "description": "Couriers Rest API Test",
+    "main": "index.mjs",
+    "author": "Christian Torrealba",
+    "private": true,
+    "scripts": {
+        "server:prod": "node -r dotenv/config src/index.mjs dotenv_config_path=./.env.production",
+        "server:dev": "nodemon -r dotenv/config --experimental-specifier-resolution=node src/index.mjs"
+    },
+    "license": "ISC",
+    "dependencies": {
+        "@hapi/joi": "^17.1.1",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "http-status": "^1.7.3",
+        "mongodb": "^3.5.9",
+        "mongoose": "^5.9.25",
+        "morgan": "^1.10.0",
+        "nodemon": "^2.0.4"
+    },
+    "devDependencies": {
+        "eslint": "^7.4.0",
+        "eslint-config-airbnb-base": "^14.2.0",
+        "eslint-plugin-import": "^2.22.0"
+    }
 }
