@@ -1,8 +1,8 @@
-const express = require('express');
+import { Router } from 'express';
+import courierRouter from './couriers.route';
 
-const router = express.Router();
+const router = Router();
 
-require('./couriers.route')(router);
-require('./courier-management.route')(router);
+router.use('/couriers', courierRouter);
 
-module.exports = router;
+export default router;

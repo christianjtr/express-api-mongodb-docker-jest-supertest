@@ -1,193 +1,202 @@
-const {
-  couriers: Couriers,
-} = require('../models');
+import HTTPStatus from 'http-status';
+import Joi from '@hapi/joi';
+import { couriers as Couriers } from '../models';
 
-module.exports = {
-  /**
-   * @method findAll
-   * @description Get all couriers
-   * @param {object} request - Express request object
-   * @param {object} response - Express response object
-   */
-  findAll: async (req, res) => {
-    try {
-      const params = req.query || {};
-      return res.status(200).send(await Couriers.find(params));
-    } catch (error) {
-      return res.status(500).send({
-        error: {
-          message: error.message || 'Error occurred when getting couriers.',
-        },
-      });
-    }
-  },
-  /**
-   * @method findById
-   * @description Get a courier by Id
-   * @param {object} request - Express request object
-   * @param {object} response - Express response object
-   */
-  findById: async (req, res) => {
-    try {
-      const courierByIdData = await Couriers.find({
-        id: req.params.courierId,
-      });
-      if (!courierByIdData) {
-        return res.status(404).send({
-          error: {
-            message: `Courier not found with Id = ${req.params.courierId}.`,
-          },
-        });
-      }
-      return res.status(200).send(courierByIdData);
-    } catch (error) {
-      return res.status(500).send({
-        error: {
-          message: error.message || `Error retrieving courier with Id = ${req.params.courierId}.`,
-        },
-      });
-    }
-  },
-  /**
-   * @method create
-   * @description Create a new courier
-   * @param {object} request - Express request object
-   * @param {object} response - Express response object
-   */
-  create: async (req, res) => {
-    try {
-      if (!req.body) {
-        return res.status(400).send({
-          error: {
-            message: 'Bad request: courier content is empty.',
-          },
-        });
-      }
+// #region Validations...
 
-      const courierData = await new Couriers({
-        ...req.body,
-      }).save();
+export async function checkId(req, _, next) {
+  try {
+    const queryObject = Joi.object({
+      courierId: Joi.number().integer().required(),
+    });
 
-      return res.status(201).send(courierData);
-    } catch (error) {
-      return res.status(500).send({
+    const { courierId } = await queryObject.validateAsync(req.params);
+
+    req.safeFields = {
+      ...(req.safeFields || {}),
+      courierId,
+    };
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function validateRecordPaylodad(req, _, next) {
+  try {
+    const queryObject = Joi.object({
+      max_capacity: Joi.number().integer().required(),
+    });
+
+    const { max_capacity: maxCapacity } = await queryObject.validateAsync(req.body);
+
+    req.safeFields = {
+      ...(req.safeFields || {}),
+      maxCapacity,
+    };
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function validateLookupQueryParams(req, _, next) {
+  try {
+    const queryObject = Joi.object({
+      capacityRequired: Joi.number().integer().min(0).required(),
+    });
+
+    const { capacityRequired } = await queryObject.validateAsync(req.params);
+
+    req.safeFields = {
+      ...(req.safeFields || {}),
+      capacityRequired,
+    };
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
+
+// #endregion
+
+export async function findAll(_, res) {
+  try {
+    const couriers = await Couriers.findAll();
+
+    res.status(HTTPStatus.OK).send(couriers);
+  } catch (error) {
+    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).send({
+      error: {
+        message: error.message || 'Error occurred when getting couriers.',
+      },
+    });
+  }
+}
+
+export async function findById(req, res) {
+  try {
+    const { courierId } = req.safeFields;
+
+    const courier = await Couriers.find({
+      id: courierId,
+    });
+
+    if (!courier) {
+      res.status(HTTPStatus.NOT_FOUND).send({
         error: {
-          message: error.message || 'Error occurred when creating a courier.',
+          message: `Courier not found with Id = ${courierId}.`,
         },
       });
     }
-  },
-  /**
-   * @method updateById
-   * @description Update a courier by Id
-   * @param {object} request - Express request object
-   * @param {object} response - Express response object
-   */
-  updateById: async (req, res) => {
-    try {
-      if (!req.params.courierId) {
-        return res.status(400).send({
-          error: {
-            message: 'Bad request: courierId must be provided in order to update the record.',
-          },
-        });
-      }
-      if (!req.body) {
-        return res.status(400).send({
-          error: {
-            message: 'Bad request: courier content is empty.',
-          },
-        });
-      }
-      const courierToBeUpdatedData = await Couriers.findOneAndUpdate({
-        id: Number(req.params.courierId),
-      }, {
-        $set: {
-          max_capacity: Number(req.body.max_capacity),
-        },
-      }, {
-        new: true,
+
+    res.status(HTTPStatus.OK).send(courier);
+  } catch (error) {
+    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).send({
+      error: {
+        message: error.message || 'Error retrieving courier',
+      },
+    });
+  }
+}
+
+export async function create(req, res) {
+  try {
+    const { maxCapacity } = req.safeFields;
+
+    const newCourier = await new Couriers({
+      max_capacity: maxCapacity,
+    })
+      .save();
+
+    res.status(HTTPStatus.CREATED).send(newCourier);
+  } catch (error) {
+    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).send({
+      error: {
+        message: error.message || 'Error occurred when creating a courier.',
+      },
+    });
+  }
+}
+
+export async function updateById(req, res) {
+  try {
+    const { courierId, maxCapacity } = req.safeFields;
+
+    const updatedCourier = await Couriers.findOneAndUpdate({
+      id: courierId,
+    }, {
+      $set: {
+        max_capacity: maxCapacity,
+      },
+    }, {
+      new: true,
+    });
+
+    if (!updatedCourier) {
+      res.status(HTTPStatus.NOT_FOUND).send({
+        courier: updatedCourier,
+        message: `Courier was not found with Id = ${courierId}`,
       });
-      if (!courierToBeUpdatedData) {
-        return res.status(200).send({
-          courier: {},
-          message: `Courier was not found with Id = ${req.params.courierId}`,
-        });
-      }
-      return res.status(200).send(courierToBeUpdatedData);
-    } catch (error) {
-      return res.status(500).send({
+    }
+
+    res.status(HTTPStatus.OK).send(updatedCourier);
+  } catch (error) {
+    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).send({
+      error: {
+        message: error.message || 'Error occurred while updating a courier.',
+      },
+    });
+  }
+}
+
+export async function deleteById(req, res) {
+  try {
+    const { courierId } = req.safeFields;
+
+    const deletedCourier = await Couriers.findOneAndRemove({
+      id: courierId,
+    });
+
+    if (!deletedCourier) {
+      res.status(HTTPStatus.NOT_FOUND).send({
         error: {
-          message: error.message || 'Error occurred while updating a courier.',
+          message: `Courier was not found. Error deleting the courier with Id = ${courierId}`,
         },
       });
     }
-  },
-  /**
-   * @method delete
-   * @description Delete a courier by Id
-   * @param {object} request - Express request object
-   * @param {object} response - Express response object
-   */
-  delete: async (req, res) => {
-    try {
-      if (!req.params.courierId) {
-        return res.status(400).send({
-          error: {
-            message: 'Bad request: courierId must be provided in order to delete the record.',
-          },
-        });
-      }
-      const courierToBeDeletedData = await Couriers.findOneAndRemove({
-        id: Number(req.params.courierId),
-      });
-      if (!courierToBeDeletedData) {
-        return res.status(404).send({
-          error: {
-            message: `Courier was not found. Error deleting the courier with Id = ${req.params.courierId}`,
-          },
-        });
-      }
-      return res.status(200).send({
-        message: 'Courier was deleted.',
-      });
-    } catch (error) {
-      return res.status(500).send({
-        error: {
-          message: error.message || `Error deleting the courier with Id = ${req.params.courierId}`,
-        },
-      });
-    }
-  },
-  /**
-   * @method lookupByAvailableSpace
-   * @description Get all couries whose capacity is greater or equal to the one required
-   * @param {object} request - Express request object
-   * @param {object} response - Express response object
-   */
-  lookupByAvailableSpace: async (req, res) => {
-    try {
-      const capacityRequired = Number(req.body.capacity_required) || null;
-      if (!capacityRequired) {
-        return res.status(400).send({
-          error: {
-            message: 'Bad request: capacity_required must be provided in order to look up the couriers.',
-          },
-        });
-      }
-      return res.status(200).send(
-        await Couriers.find({
-          max_capacity: {
-            $gte: capacityRequired,
-          },
-        }),
-      );
-    } catch (error) {
-      return res.status(500).send({
-        error: {
-          message: error.message || `Error occurred when getting couriers. Capacity required = ${req.body.capacity_required}`,
-        },
-      });
-    }
-  },
-};
+
+    res.status(HTTPStatus.OK).send({
+      message: `Courier having Id = ${courierId} was deleted.`,
+    });
+  } catch (error) {
+    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).send({
+      error: {
+        message: error.message || 'Error deleting the courier',
+      },
+    });
+  }
+}
+
+export async function lookupByAvailableSpace(req, res) {
+  try {
+    const { capacityRequired } = req.safeFields;
+
+    const couriers = await Couriers.find({
+      max_capacity: {
+        $gte: capacityRequired,
+      },
+    });
+
+    res.status(HTTPStatus.OK).send(couriers);
+  } catch (error) {
+    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).send({
+      error: {
+        message: error.message || 'Error occurred when getting couriers.',
+      },
+    });
+  }
+}
