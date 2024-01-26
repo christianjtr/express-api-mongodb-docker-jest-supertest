@@ -1,14 +1,14 @@
-const express = require('express');
-const morgan = require('morgan');
+import express, { json, urlencoded } from 'express';
+import morgan from 'morgan';
 
 const Server = express();
 
 Server.use(morgan('dev'));
-Server.use(express.json());
+Server.use(json());
 Server.use(
-  express.urlencoded({
+  urlencoded({
     extended: false,
   }),
 );
 
-module.exports = Server;
+export default Server;

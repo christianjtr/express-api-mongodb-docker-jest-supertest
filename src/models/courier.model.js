@@ -1,4 +1,6 @@
-module.exports = (mongoose) => mongoose.model('Couriers', mongoose.Schema({
+import mongoose from 'mongoose';
+
+const courierModel = mongoose.model('Courier', mongoose.Schema({
   id: {
     type: Number,
     required: true,
@@ -11,3 +13,5 @@ module.exports = (mongoose) => mongoose.model('Couriers', mongoose.Schema({
 }, {
   timestamps: true,
 }));
+
+export default courierModel;

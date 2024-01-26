@@ -1,9 +1,5 @@
-const mongoose = require('mongoose');
+import courierModel from './courier.model';
 
-mongoose.Promise = global.Promise;
-
-const couriers = require('./couriers.model')(mongoose);
-
-module.exports = {
-  couriers,
+export default {
+  courier: courierModel,
 };
