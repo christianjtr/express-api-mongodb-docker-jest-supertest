@@ -6,8 +6,7 @@
     "author": "Christian Torrealba",
     "private": true,
     "scripts": {
-        "server:prod": "node -r dotenv/config src/index.mjs dotenv_config_path=./.env.production",
-        "server:dev": "nodemon -r dotenv/config --experimental-specifier-resolution=node src/index.mjs"
+        "server:dev": "nodemon --experimental-specifier-resolution=node src/index.mjs"
     },
     "license": "ISC",
     "dependencies": {
@@ -21,6 +20,7 @@
         "nodemon": "^2.0.4"
     },
     "devDependencies": {
+        "@types/dotenv": "^8.2.0",
         "eslint": "^7.4.0",
         "eslint-config-airbnb-base": "^14.2.0",
         "eslint-plugin-import": "^2.22.0"
