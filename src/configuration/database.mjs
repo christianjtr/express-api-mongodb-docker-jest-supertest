@@ -7,7 +7,7 @@ const configuration = {
   models,
 };
 
-const connectDB = () => {
+const connect = () => {
   const DBConnection = mongoose.connection;
 
   DBConnection.once('open', () => {
@@ -31,5 +31,5 @@ const connectDB = () => {
 };
 
 export default {
-  connectDB,
+  connect,
 };
