@@ -6,7 +6,9 @@
     "author": "Christian Torrealba",
     "private": true,
     "scripts": {
-        "server:dev": "nodemon --experimental-specifier-resolution=node src/index.mjs"
+        "docker:start": "docker-compose build && docker-compose up",
+        "server:start": "nodemon --experimental-specifier-resolution=node src/index.mjs",
+        "server:dev": "npm run docker:start && server:start"
     },
     "license": "ISC",
     "dependencies": {
