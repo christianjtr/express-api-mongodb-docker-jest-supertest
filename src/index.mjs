@@ -6,6 +6,9 @@ import Server from './configuration/server';
 const main = () => {
   // Database initialization...
   Database.connect();
+  if (process.env.SEED_MOCKED_DATA) {
+    Database.seedMockData();
+  }
 
   // Server initialization...
   const baseURI = `/api/${process.env.API_VERSION}`;
