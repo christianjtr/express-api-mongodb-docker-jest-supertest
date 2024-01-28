@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const courierModel = mongoose.model('Courier', mongoose.Schema({
+const CourierSchema = new mongoose.Schema({
   id: {
     type: Number,
     required: true,
@@ -12,6 +12,8 @@ const courierModel = mongoose.model('Courier', mongoose.Schema({
   },
 }, {
   timestamps: true,
-}));
+});
 
-export default courierModel;
+const CourierModel = mongoose.model('Courier', CourierSchema);
+
+export default CourierModel;
