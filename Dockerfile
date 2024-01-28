@@ -1,8 +1,9 @@
 FROM node:14
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
-COPY package*.json ./
+WORKDIR /app
+ENV PORT 3001
+EXPOSE ${PORT}
+COPY ./package.json /app/package.json
+COPY ./package-lock.json /app/package-lock.json
 RUN npm install
-COPY . .
-EXPOSE 3001
-CMD ["npm", "run", "server:prod"]
+COPY . /app
+CMD ["npm", "run", "server:start"]
