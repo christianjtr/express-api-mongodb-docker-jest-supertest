@@ -1,81 +1,73 @@
 # Assestment considerations
-
-Environment variables are defined in these files:
-
-- .env
-- .env.example
-- .env.produdction
-
-These are the topics covered:
-
-- Docker containerization (Docker-compose):
-  - API Server (NodeJS/Express).
-  - MongoDB Service.
-- NodeJS API aspects
-  - Mongoose (ODM).
+// TBD
 
 # How to run the project
+// TBD
 
-Note you should have installed these services:
+# API Endpoints
 
-- NodeJS (stable version).
-- MongoDB (stable version).
-- Docker.
+#### Health checks
+###### Example cURL
 
-Therefore, run these commands (Development mode):
-
-```sh
-$ npm install
-$ npm run server:dev
+```javascript
+$ curl --location 'http://localhost:3001/api/v1/health-checks/alive'
 ```
 
-Otherwise, run these commands (Docker):
+#### Couriers
 
-```sh
-$ docker-compose build
-$ docker-compose up
+Basic CRUD operations
+
+````javascript
+URI: /couriers
+````
+
+##### Get all couriers
+###### Example cURL
+```javascript
+$ curl --location 'http://localhost:3001/api/v1/couriers'
 ```
 
-Start by browsing to this direction:
+##### Get courier by ID
+###### Example cURL
+```javascript
+$ curl --location 'http://localhost:3001/api/v1/couriers/65b93d111efb464a86c6d109'
+```
 
-- http://localhost:3001/api/v1/couriers
+##### Create courier
+###### Example cURL
+```javascript
+$ curl --location 'http://localhost:3001/api/v1/couriers' \
+--header 'Content-Type: application/json' \
+--data '{
+    "max_capacity": 100
+}'
+```
 
-# API Definition
+##### Update courier by ID
+###### Example cURL
+```javascript
+$ curl --location --request PUT 'http://localhost:3001/api/v1/couriers/65b93d4e1afd3c4aab06a8d5' \
+--header 'Content-Type: application/json' \
+--data '{
+    "max_capacity": 50
+}'
+```
 
-API RESTful design:
+##### Delete courier by ID
+###### Example cURL
+```javascript
+$ curl --location --request DELETE 'http://localhost:3001/api/v1/couriers/65b93d92d1f6ff4ad25961c6'
+```
 
-In order to follow the proposed REST's designing conventions, we have defined the resources as follow:
+#### Courier actions
 
-- Couriers:
+````javascript
+URI: /couriers/lookup/:capacity_required
+````
 
-  - Methods: GET, POST
-    - /couriers
-  - Methods: GET, PUT, DELETE
-    - /couriers/:courierId
-
-- Couriers management:
-  - Methods: GET
-    - /courier-management/lookup
-
-### Comments
-
-- If we use **/couriers/lookup** and **/couriers/:@queryParams** we are going to have problems when accessing the resource, because the definitions are overlapped and the word _lookup_ is interpreted like a proper query param used to access a member of the _courier collection_. Hence, a recommended design approach is to define it in another way for guaranteeing the access to the controller and to maintain a better REST design, So, we use **/courier-management/lookup**
-
-# Considerations
-
-- Race conditions are mostly handled by the DDBB itself when performing deadLocks, however, we could avoid some exceptions by using JS Locks/Barriers implementations, for instance with Mutex implementations.
-
-# Implementation improvements
-
-- Add an authentication middleware (JWT, Oauth, auth-headers, etc.) in order to secure critical CRUD operations (create, update, delete, other).
-- Large projects often implement microservices strategies in order to balance the performance of backend operations (development of an API gateway to balance/cluster the queries and requests).
-- Implementation of queuing systems like RabbitMQ.
-- Implement a pusher technology strategy (socket communication, cron job, batch process)  in order to inform the Dispatcher service about any change in the capacities that are available at certain moments.
-- In order to improve performance when querying, we can implement some caching policy (Redis, or other caching policy).
-
-# Technical improvements
-
-- Add git support.
-- Add JS bundler (Webpack, parcel, etc.) and build in production mode.
-- Add tests (Jest - @types/packages, Supertest - HTTP and implement a test DB).
-- Add typescript support.
+##### Lookup
+Request data from this API to find out which couriers do have available space. (Greater or equals than the requested capacity)
+###### Example cURL
+```javascript
+$ curl --location 'http://localhost:3001/api/v1/couriers/lookup/700'
+```
