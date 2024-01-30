@@ -58,7 +58,6 @@ export async function validateLookupQueryParams(request, _, next) {
     next();
   } catch (error) {
     next(error);
-    throw new SyntaxError(error);
   }
 }
 

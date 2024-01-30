@@ -9,14 +9,14 @@ const router = Router();
    * @description Check whether API is alive or not
    * @param {string} path - Express path
    */
-router.get('/alive', (_, res) => {
+router.get('/alive', (_, response) => {
   const data = {
     uptime: process.uptime(),
     message: 'Ok',
     date: new Date(),
   };
 
-  res.status(HTTPStatus.OK).send(data);
+  response.status(HTTPStatus.OK).send(data);
 });
 
 export default router;
