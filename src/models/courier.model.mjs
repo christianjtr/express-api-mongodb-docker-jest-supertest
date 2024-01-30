@@ -1,19 +1,19 @@
 import mongoose from 'mongoose';
 
+const { Schema } = mongoose;
+
 const CourierSchema = new mongoose.Schema({
-  id: {
-    type: Number,
-    required: true,
-    unique: true,
+  _id: {
+    type: Schema.Types.ObjectId,
   },
   max_capacity: {
-    type: Number,
+    type: Schema.Types.Number,
     required: true,
   },
 }, {
   timestamps: true,
 });
 
-const CourierModel = mongoose.model('Courier', CourierSchema);
+const Courier = mongoose.model('Courier', CourierSchema);
 
-export default CourierModel;
+export default Courier;

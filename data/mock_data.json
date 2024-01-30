@@ -1,12 +1,12 @@
 [
-    { "$oid": "65b6d847fc13ae28fd234670", "max_capacity": 150 },
-    { "$oid": "65b6d847fc13ae28fd234671", "max_capacity": 53 },
-    { "$oid": "65b6d847fc13ae28fd234672", "max_capacity": 569 },
-    { "$oid": "65b6d847fc13ae28fd234673", "max_capacity": 88 },
-    { "$oid": "65b6d847fc13ae28fd234674", "max_capacity": 35 },
-    { "$oid": "65b6d847fc13ae28fd234675", "max_capacity": 703 },
-    { "$oid": "65b6d847fc13ae28fd234676", "max_capacity": 365 },
-    { "$oid": "65b6d847fc13ae28fd234677", "max_capacity": 721 },
-    { "$oid": "65b6d847fc13ae28fd234678", "max_capacity": 11 },
-    { "$oid": "65b6d847fc13ae28fd234679", "max_capacity": 904 }
+    { "max_capacity": 150 },
+    { "max_capacity": 53 },
+    { "max_capacity": 569 },
+    { "max_capacity": 88 },
+    { "max_capacity": 35 },
+    { "max_capacity": 703 },
+    { "max_capacity": 365 },
+    { "max_capacity": 721 },
+    { "max_capacity": 11 },
+    { "max_capacity": 904 }
 ]

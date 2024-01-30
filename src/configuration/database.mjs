@@ -8,39 +8,37 @@ const configuration = {
   models,
 };
 
-const connect = () => {
-  const DBConnection = mongoose.connection;
-
-  DBConnection.once('open', () => {
-    console.log(`MongoDB database connected: ${configuration.URL}`);
-  });
-
-  DBConnection.on('error', (error) => {
-    console.error(`MongoDB connection error: ${error}`);
-  });
-
+const connect = async () => {
   try {
-    mongoose.connect(configuration.URL, {
+    await mongoose.connect(configuration.URL, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
     });
+
+    console.log(`MongoDB database connected: ${configuration.URL}`);
   } catch (error) {
     console.error(error.message);
     process.exit(1);
   }
 };
 
-const seedMockData = async () => {
-  const { models: { CourierModel } } = configuration;
-
-  await CourierModel.deleteMany({});
-  await CourierModel.insertMany(MockData);
-
+const closeConnection = () => {
   mongoose.connection.close();
+};
+
+const seedMockData = async () => {
+  const { models: { Courier } } = configuration;
+  try {
+    await Courier.deleteMany({});
+    await Courier.insertMany(MockData);
+  } catch (error) {
+    console.error(new Error(error));
+  }
 };
 
 export default {
   connect,
+  closeConnection,
   seedMockData,
 };

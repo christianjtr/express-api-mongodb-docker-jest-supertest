@@ -5,7 +5,7 @@ import Server from './configuration/server';
 
 const main = async () => {
   // Database initialization...
-  Database.connect();
+  await Database.connect();
   if (process.env.SEED_MOCKED_DATA === 'true') {
     await Database.seedMockData();
   }

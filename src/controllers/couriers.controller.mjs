@@ -1,19 +1,19 @@
 import HTTPStatus from 'http-status';
 import Joi from '@hapi/joi';
-import { CourierModel } from '../models';
+import { Courier } from '../models';
 
 // #region Validations...
 
-export async function checkId(req, _, next) {
+export async function checkId(request, _, next) {
   try {
     const queryObject = Joi.object({
-      courierId: Joi.number().integer().required(),
+      courierId: Joi.string().hex().length(24).required(),
     });
 
-    const { courierId } = await queryObject.validateAsync(req.params);
+    const { courierId } = await queryObject.validateAsync(request.params);
 
-    req.safeFields = {
-      ...(req.safeFields || {}),
+    request.safeFields = {
+      ...(request.safeFields || {}),
       courierId,
     };
 
@@ -23,16 +23,16 @@ export async function checkId(req, _, next) {
   }
 }
 
-export async function validateRecordPaylodad(req, _, next) {
+export async function validateRecordPaylodad(request, _, next) {
   try {
     const queryObject = Joi.object({
       max_capacity: Joi.number().integer().required(),
     });
 
-    const { max_capacity: maxCapacity } = await queryObject.validateAsync(req.body);
+    const { max_capacity: maxCapacity } = await queryObject.validateAsync(request.body);
 
-    req.safeFields = {
-      ...(req.safeFields || {}),
+    request.safeFields = {
+      ...(request.safeFields || {}),
       maxCapacity,
     };
 
@@ -42,91 +42,95 @@ export async function validateRecordPaylodad(req, _, next) {
   }
 }
 
-export async function validateLookupQueryParams(req, _, next) {
+export async function validateLookupQueryParams(request, _, next) {
   try {
     const queryObject = Joi.object({
       capacityRequired: Joi.number().integer().min(0).required(),
     });
 
-    const { capacityRequired } = await queryObject.validateAsync(req.params);
+    const { capacityRequired } = await queryObject.validateAsync(request.params);
 
-    req.safeFields = {
-      ...(req.safeFields || {}),
+    request.safeFields = {
+      ...(request.safeFields || {}),
       capacityRequired,
     };
 
     next();
   } catch (error) {
     next(error);
+    throw new SyntaxError(error);
   }
 }
 
 // #endregion
 
-export async function findAll(_, res) {
+export async function findAll(_, response, next) {
   try {
-    const couriers = await CourierModel.findAll();
+    const couriers = await Courier.find({});
 
-    res.status(HTTPStatus.OK).send(couriers);
+    response.status(HTTPStatus.OK).send(couriers);
   } catch (error) {
-    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).send({
+    response.status(HTTPStatus.INTERNAL_SERVER_ERROR).send({
       error: {
         message: error.message || 'Error occurred when getting couriers.',
       },
     });
+    next(error);
   }
 }
 
-export async function findById(req, res) {
+export async function findById(request, response, next) {
   try {
-    const { courierId } = req.safeFields;
+    const { courierId } = request.safeFields;
 
-    const courier = await CourierModel.find({
-      id: courierId,
-    });
+    const courier = await Courier.findById(courierId);
 
     if (!courier) {
-      res.status(HTTPStatus.NOT_FOUND).send({
+      response.status(HTTPStatus.NOT_FOUND).send({
         error: {
           message: `Courier not found with Id = ${courierId}.`,
         },
       });
+
+      return;
     }
 
-    res.status(HTTPStatus.OK).send(courier);
+    response.status(HTTPStatus.OK).send(courier);
   } catch (error) {
-    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).send({
+    response.status(HTTPStatus.INTERNAL_SERVER_ERROR).send({
       error: {
         message: error.message || 'Error retrieving courier',
       },
     });
+    next(error);
   }
 }
 
-export async function create(req, res) {
+export async function create(request, response, next) {
   try {
-    const { maxCapacity } = req.safeFields;
+    const { maxCapacity } = request.safeFields;
 
-    const newCourier = await new CourierModel({
+    const newCourier = await new Courier({
       max_capacity: maxCapacity,
     })
       .save();
 
-    res.status(HTTPStatus.CREATED).send(newCourier);
+    response.status(HTTPStatus.CREATED).send(newCourier);
   } catch (error) {
-    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).send({
+    response.status(HTTPStatus.INTERNAL_SERVER_ERROR).send({
       error: {
         message: error.message || 'Error occurred when creating a courier.',
       },
     });
+    next(error);
   }
 }
 
-export async function updateById(req, res) {
+export async function updateById(request, response, next) {
   try {
-    const { courierId, maxCapacity } = req.safeFields;
+    const { courierId, maxCapacity } = request.safeFields;
 
-    const updatedCourier = await CourierModel.findOneAndUpdate({
+    const updatedCourier = await Courier.findOneAndUpdate({
       id: courierId,
     }, {
       $set: {
@@ -137,66 +141,73 @@ export async function updateById(req, res) {
     });
 
     if (!updatedCourier) {
-      res.status(HTTPStatus.NOT_FOUND).send({
+      response.status(HTTPStatus.NOT_FOUND).send({
         courier: updatedCourier,
         message: `Courier was not found with Id = ${courierId}`,
       });
+
+      return;
     }
 
-    res.status(HTTPStatus.OK).send(updatedCourier);
+    response.status(HTTPStatus.OK).send(updatedCourier);
   } catch (error) {
-    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).send({
+    response.status(HTTPStatus.INTERNAL_SERVER_ERROR).send({
       error: {
         message: error.message || 'Error occurred while updating a courier.',
       },
     });
+    next(error);
   }
 }
 
-export async function deleteById(req, res) {
+export async function deleteById(request, response, next) {
   try {
-    const { courierId } = req.safeFields;
+    const { courierId } = request.safeFields;
 
-    const deletedCourier = await CourierModel.findOneAndRemove({
+    const deletedCourier = await Courier.findOneAndRemove({
       id: courierId,
     });
 
     if (!deletedCourier) {
-      res.status(HTTPStatus.NOT_FOUND).send({
+      response.status(HTTPStatus.NOT_FOUND).send({
         error: {
           message: `Courier was not found. Error deleting the courier with Id = ${courierId}`,
         },
       });
+
+      return;
     }
 
-    res.status(HTTPStatus.OK).send({
+    response.status(HTTPStatus.OK).send({
       message: `Courier having Id = ${courierId} was deleted.`,
     });
   } catch (error) {
-    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).send({
+    response.status(HTTPStatus.INTERNAL_SERVER_ERROR).send({
       error: {
         message: error.message || 'Error deleting the courier',
       },
     });
+    next(error);
   }
 }
 
-export async function lookupByAvailableSpace(req, res) {
+export async function lookupByAvailableSpace(request, response, next) {
   try {
-    const { capacityRequired } = req.safeFields;
+    const { capacityRequired } = request.safeFields;
 
-    const couriers = await CourierModel.find({
+    const couriers = await Courier.find({
       max_capacity: {
         $gte: capacityRequired,
       },
     });
 
-    res.status(HTTPStatus.OK).send(couriers);
+    response.status(HTTPStatus.OK).send(couriers);
   } catch (error) {
-    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).send({
+    response.status(HTTPStatus.INTERNAL_SERVER_ERROR).send({
       error: {
         message: error.message || 'Error occurred when getting couriers.',
       },
     });
+    next(error);
   }
 }
