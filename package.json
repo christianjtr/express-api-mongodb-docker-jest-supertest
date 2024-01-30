@@ -6,9 +6,10 @@
     "author": "Christian Torrealba",
     "private": true,
     "scripts": {
-        "docker:start": "docker-compose build && docker-compose up",
+        "docker:build": "docker-compose -p my-dockerized-app build",
         "server:start": "nodemon --experimental-specifier-resolution=node src/index.mjs",
-        "server:dev": "npm run docker:start && server:start"
+        "app:start": "docker-compose up -d",
+        "app:stop": "docker-compose down"
     },
     "license": "ISC",
     "dependencies": {
