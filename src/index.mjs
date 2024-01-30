@@ -3,11 +3,11 @@ import 'dotenv/config';
 import Database from './configuration/database';
 import Server from './configuration/server';
 
-const main = () => {
+const main = async () => {
   // Database initialization...
   Database.connect();
-  if (process.env.SEED_MOCKED_DATA) {
-    Database.seedMockData();
+  if (process.env.SEED_MOCKED_DATA === 'true') {
+    await Database.seedMockData();
   }
 
   // Server initialization...
