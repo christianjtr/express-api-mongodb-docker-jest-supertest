@@ -26,7 +26,7 @@ export async function checkId(request, _, next) {
 export async function validateRecordPaylodad(request, _, next) {
   try {
     const queryObject = Joi.object({
-      max_capacity: Joi.number().integer().required(),
+      max_capacity: Joi.number().integer().min(0).required(),
     });
 
     const { max_capacity: maxCapacity } = await queryObject.validateAsync(request.body);
@@ -131,7 +131,7 @@ export async function updateById(request, response, next) {
     const { courierId, maxCapacity } = request.safeFields;
 
     const updatedCourier = await Courier.findOneAndUpdate({
-      id: courierId,
+      _id: courierId,
     }, {
       $set: {
         max_capacity: maxCapacity,
@@ -165,7 +165,7 @@ export async function deleteById(request, response, next) {
     const { courierId } = request.safeFields;
 
     const deletedCourier = await Courier.findOneAndRemove({
-      id: courierId,
+      _id: courierId,
     });
 
     if (!deletedCourier) {
