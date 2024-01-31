@@ -7,6 +7,28 @@ servers:
     - url: http://localhost:3001/api/v1
       description: Development environment
 paths:
+    /health-checks/alive:
+        get:
+            summary: Checks whether the API services are up and ready
+            tags:
+                - Health checks
+            responses:
+                "200":
+                    description: A health check object
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    uptime:
+                                        type: integer
+                                        example: 797.071158636
+                                    message:
+                                        type: string
+                                        example: Ok
+                                    date:
+                                        type: string
+                                        example: "2024-01-30T18:37:06.234Z"
     /couriers:
         get:
             summary: Returns a collection of users.
@@ -172,7 +194,7 @@ paths:
         get:
             summary: Returns a collection of users that match a capacity criteria greater or equals than requested.
             tags:
-                - Courier management
+                - Courier actions
             parameters:
                 - name: capacityRequired
                   in: path

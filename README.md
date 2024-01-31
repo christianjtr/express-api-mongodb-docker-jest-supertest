@@ -6,6 +6,16 @@
 
 # API Endpoints
 
+#### API Docs
+
+Swagger API Docs
+
+````javascript
+URI: /docs
+````
+
+![](./assets/swagger_specs_demo.png)
+
 #### Health checks
 ###### Example cURL
 
