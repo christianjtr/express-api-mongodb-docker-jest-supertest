@@ -1,0 +1,197 @@
+openapi: 3.0.0
+info:
+    title: Courier Sample API
+    description: Couriers Rest API Test specs
+    version: 1.0.0
+servers:
+    - url: http://localhost:3001/api/v1
+      description: Development environment
+paths:
+    /couriers:
+        get:
+            summary: Returns a collection of users.
+            tags:
+                - Couriers
+            responses:
+                "200":
+                    description: A JSON collection of couriers
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    properties:
+                                        _id:
+                                            type: string
+                                            example: 65b941ecb897374b7aa89f7d
+                                        max_capacity:
+                                            type: integer
+                                            example: 100
+        post:
+            summary: Create a courier.
+            tags:
+                - Couriers
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                max_capacity:
+                                    type: integer
+                                    example: 100
+            responses:
+                "201":
+                    description: Courier has been created
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    _id:
+                                        type: string
+                                        example: 65b941ecb897374b7aa89f7d
+                                    max_capacity:
+                                        type: integer
+                                        example: 100
+    /couriers/{courierId}:
+        get:
+            summary: Returns a courier by ID.
+            tags:
+                - Couriers
+            parameters:
+                - name: courierId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: A courier representation
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    _id:
+                                        type: string
+                                        example: 65b941ecb897374b7aa89f7d
+                                    max_capacity:
+                                        type: integer
+                                        example: 100
+                "404":
+                    description: Courier not found
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: Custom error message
+        put:
+            summary: Update a courier by ID.
+            tags:
+                - Couriers
+            parameters:
+                - name: courierId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                max_capacity:
+                                    type: integer
+                                    example: 100
+            responses:
+                "200":
+                    description: A courier representation
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    _id:
+                                        type: string
+                                        example: 65b941ecb897374b7aa89f7d
+                                    max_capacity:
+                                        type: integer
+                                        example: 100
+                "404":
+                    description: Courier not found
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: Custom error message
+
+        delete:
+            summary: Delete a courier by ID.
+            tags:
+                - Couriers
+            parameters:
+                - name: courierId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Courier has been deleted
+                "404":
+                    description: Courier not found
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: Custom error message
+    /couriers/lookup/{capacityRequired}:
+        get:
+            summary: Returns a collection of users that match a capacity criteria greater or equals than requested.
+            tags:
+                - Courier management
+            parameters:
+                - name: capacityRequired
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                      min: 0
+            responses:
+                "200":
+                    description: A JSON collection of couriers
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    properties:
+                                        _id:
+                                            type: string
+                                            example: 65b941ecb897374b7aa89f7d
+                                        max_capacity:
+                                            type: integer
+                                            example: 100

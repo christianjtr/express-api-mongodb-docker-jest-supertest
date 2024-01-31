@@ -1,6 +1,9 @@
 /* eslint-disable no-console */
 import express, { json, urlencoded } from 'express';
 import morgan from 'morgan';
+import swaggerUI from 'swagger-ui-express';
+import YAML from 'yamljs';
+
 import errorLoggerHandler from '../middleware/errorLoggerHandler.middleware';
 import routes from '../routes';
 
@@ -16,6 +19,7 @@ const init = (baseURI, port) => {
   );
 
   server.use(baseURI, routes);
+  server.use(`${baseURI}/docs`, swaggerUI.serve, swaggerUI.setup(YAML.load('./swagger.api.specs.yml')));
   server.use(errorLoggerHandler);
   server.set('port', port);
   server.listen(port, () => {
