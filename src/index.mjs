@@ -1,19 +1,27 @@
 /* eslint-disable no-console */
 import 'dotenv/config';
-import Database from './configuration/database';
-import Server from './configuration/server';
+import database from './database/db';
+import app from './app';
 
-const main = async () => {
-  // Database initialization...
-  await Database.connect();
-  if (process.env.SEED_MOCKED_DATA === 'true') {
-    await Database.seedMockData();
+// Database initialization...
+const initializeDB = async () => {
+  try {
+    await database.connect();
+    if (process.env.SEED_MOCKED_DATA === 'true') {
+      await database.seedMockData();
+    }
+    console.info('[Info]: Database initialized');
+  } catch (error) {
+    console.error(error);
   }
-
-  // Server initialization...
-  const baseURI = `/api/${process.env.API_VERSION}`;
-  const port = process.env.PORT || process.env.SERVER_PORT;
-  Server.init(baseURI, port);
 };
 
-main();
+// Server initialization...
+const port = process.env.PORT || process.env.SERVER_PORT;
+app.set('port', port);
+app.listen(port, () => {
+  console.info(`API app listening on port ${port}`);
+  initializeDB();
+});
+
+export default app;

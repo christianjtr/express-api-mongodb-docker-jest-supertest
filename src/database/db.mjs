@@ -23,7 +23,7 @@ const connect = async () => {
   }
 };
 
-const closeConnection = () => {
+const disconnect = () => {
   mongoose.connection.close();
 };
 
@@ -39,6 +39,6 @@ const seedMockData = async () => {
 
 export default {
   connect,
-  closeConnection,
+  disconnect,
   seedMockData,
 };
