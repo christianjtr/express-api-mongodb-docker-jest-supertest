@@ -8,10 +8,31 @@
     "scripts": {
         "docker:build": "docker-compose -p my-dockerized-app build",
         "server:start": "nodemon --experimental-specifier-resolution=node src/index.mjs",
+        "test": "jest --no-cache --detectOpenHandles --forceExit",
         "app:start": "docker-compose up -d",
         "app:stop": "docker-compose down"
     },
     "license": "ISC",
+    "config": {
+        "mongodbMemoryServer": {
+            "debug": "0"
+        }
+    },
+    "jest": {
+        "setupFiles": [
+            "./setup-jest.mjs"
+        ],
+        "testEnvironment": "node",
+        "coveragePathIgnorePatterns": [
+            "/node_modules/",
+            "/assets",
+            "/data"
+        ],
+        "transform": {
+            "^.+\\.js?$": "babel-jest",
+            "^.+\\.mjs$": "babel-jest"
+        }
+    },
     "dependencies": {
         "@hapi/joi": "^17.1.1",
         "dotenv": "^8.2.0",
@@ -26,9 +47,13 @@
         "yamljs": "^0.3.0"
     },
     "devDependencies": {
+        "@babel/preset-env": "^7.23.9",
         "@types/dotenv": "^8.2.0",
         "eslint": "^7.4.0",
         "eslint-config-airbnb-base": "^14.2.0",
-        "eslint-plugin-import": "^2.22.0"
+        "eslint-plugin-import": "^2.22.0",
+        "jest": "^29.7.0",
+        "mongodb-memory-server": "^8.0.0",
+        "supertest": "^6.3.4"
     }
 }
