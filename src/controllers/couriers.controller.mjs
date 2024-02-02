@@ -1,6 +1,6 @@
 import HTTPStatus from 'http-status';
 import Joi from '@hapi/joi';
-import { Courier } from '../models';
+import { CourierServices } from '../services';
 
 // #region Validations...
 
@@ -65,7 +65,7 @@ export async function validateLookupQueryParams(request, _, next) {
 
 export async function findAll(_, response, next) {
   try {
-    const couriers = await Courier.find({});
+    const couriers = await CourierServices.getCouriers();
 
     response.status(HTTPStatus.OK).send(couriers);
   } catch (error) {
@@ -82,7 +82,7 @@ export async function findById(request, response, next) {
   try {
     const { courierId } = request.safeFields;
 
-    const courier = await Courier.findById(courierId);
+    const courier = await CourierServices.getCourierById(courierId);
 
     if (!courier) {
       response.status(HTTPStatus.NOT_FOUND).send({
@@ -109,10 +109,7 @@ export async function create(request, response, next) {
   try {
     const { maxCapacity } = request.safeFields;
 
-    const newCourier = await new Courier({
-      max_capacity: maxCapacity,
-    })
-      .save();
+    const newCourier = await CourierServices.create({ maxCapacity });
 
     response.status(HTTPStatus.CREATED).send(newCourier);
   } catch (error) {
@@ -129,15 +126,7 @@ export async function updateById(request, response, next) {
   try {
     const { courierId, maxCapacity } = request.safeFields;
 
-    const updatedCourier = await Courier.findOneAndUpdate({
-      _id: courierId,
-    }, {
-      $set: {
-        max_capacity: maxCapacity,
-      },
-    }, {
-      new: true,
-    });
+    const updatedCourier = await CourierServices.updateById(courierId, { maxCapacity });
 
     if (!updatedCourier) {
       response.status(HTTPStatus.NOT_FOUND).send({
@@ -163,9 +152,7 @@ export async function deleteById(request, response, next) {
   try {
     const { courierId } = request.safeFields;
 
-    const deletedCourier = await Courier.findOneAndRemove({
-      _id: courierId,
-    });
+    const deletedCourier = await CourierServices.deleteById(courierId);
 
     if (!deletedCourier) {
       response.status(HTTPStatus.NOT_FOUND).send({
@@ -194,11 +181,7 @@ export async function lookupByAvailableSpace(request, response, next) {
   try {
     const { capacityRequired } = request.safeFields;
 
-    const couriers = await Courier.find({
-      max_capacity: {
-        $gte: capacityRequired,
-      },
-    });
+    const couriers = await CourierServices.lookupByAvailableSpace(capacityRequired);
 
     response.status(HTTPStatus.OK).send(couriers);
   } catch (error) {

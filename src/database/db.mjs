@@ -16,7 +16,7 @@ const connect = async () => {
       useCreateIndex: true,
     });
 
-    console.log(`MongoDB database connected: ${configuration.URL}`);
+    console.info(`[Info]: MongoDB database connected: ${configuration.URL}`);
   } catch (error) {
     console.error(error.message);
     process.exit(1);

@@ -19,9 +19,12 @@ const initializeDB = async () => {
 // Server initialization...
 const port = process.env.PORT || process.env.SERVER_PORT;
 app.set('port', port);
-app.listen(port, () => {
-  console.info(`API app listening on port ${port}`);
-  initializeDB();
-});
+
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(port, () => {
+    console.info(`[Info]: API app listening on port ${port}`);
+    initializeDB();
+  });
+}
 
 export default app;
