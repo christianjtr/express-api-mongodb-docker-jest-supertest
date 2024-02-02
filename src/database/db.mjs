@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import mongoose from 'mongoose';
 import * as models from '../models';
-import MockData from '../../data/mock_data.json';
+import { data } from './mock/mock_data';
 
 const configuration = {
   URL: `mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${process.env.MONGODB_DB}`,
@@ -31,7 +31,7 @@ const seedMockData = async () => {
   const { models: { Courier } } = configuration;
   try {
     await Courier.deleteMany({});
-    await Courier.insertMany(MockData);
+    await Courier.insertMany(data);
   } catch (error) {
     console.error(new Error(error));
   }
