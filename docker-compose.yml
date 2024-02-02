@@ -1,19 +1,29 @@
 version: "2"
 services:
-  server:
+  nodejs:
     container_name: server
-    restart: always
-    build: .
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: node:16
+    env_file: .env
+    environment:
+      - SERVER_PORT=$SERVER_PORT
+      - API_VERSION=$API_VERSION
+      - SEED_MOCKED_DATA=$SEED_MOCKED_DATA
+      - MONGODB_HOST=db
+      - MONGODB_PORT=$MONGODB_PORT
+      - MONGODB_DB=$MONGODB_DB 
     ports:
       - "3001:3001"
     links:
-      - mongodb
+      - db
     volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-  mongodb:
-    container_name: mongodb
-    restart: always
-    image: mongo
+      - .:/app
+  db:
+    container_name: db
+    restart: unless-stopped
+    image: mongo:4.4
     ports:
       - "27017:27017"
