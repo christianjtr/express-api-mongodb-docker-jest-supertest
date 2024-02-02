@@ -6,11 +6,10 @@
     "author": "Christian Torrealba",
     "private": true,
     "scripts": {
-        "docker:build": "docker-compose -p my-dockerized-app build",
+        "app:start": "docker-compose -p my-dockerized-app up -d --build",
+        "app:stop": "docker-compose down",
         "server:start": "nodemon --experimental-specifier-resolution=node src/index.mjs",
-        "test": "jest --no-cache --detectOpenHandles --forceExit",
-        "app:start": "docker-compose up -d",
-        "app:stop": "docker-compose down"
+        "test": "jest --no-cache --detectOpenHandles --forceExit"
     },
     "license": "ISC",
     "config": {
