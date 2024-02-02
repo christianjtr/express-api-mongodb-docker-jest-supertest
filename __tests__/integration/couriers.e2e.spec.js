@@ -64,6 +64,19 @@ describe('Couriers endpoints', () => {
     expect(response.headers['content-type']).toMatch(/application\/json/);
   });
 
+  it('[POST] /couriers > sad path: should fail if payload is not correct', async () => {
+    const payload = {
+      max_capacity: '<WRONG_VALUE>',
+    };
+
+    CourierServices.create = jest.fn();
+
+    const response = await agent.post(`${URI}`).send(payload);
+
+    expect(CourierServices.create).not.toHaveBeenCalled();
+    expect(response.statusCode).toBe(HTTPStatus.INTERNAL_SERVER_ERROR);
+  });
+
   it('[PUT] /couriers/:courierId > should update a courier', async () => {
     const { _id: courierId } = courier;
     const payload = {
