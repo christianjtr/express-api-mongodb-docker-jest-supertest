@@ -1,6 +1,6 @@
 # JS API RESTFul test
 
-This is a conceptual test that put into practice the following core technologies:
+This is a conceptual test that puts into practice the following core technologies:
 
 - [ExpressJS](https://expressjs.com/)
 - [MongoDB](https://www.mongodb.com/)
@@ -10,6 +10,7 @@ This is a conceptual test that put into practice the following core technologies
 ### 🎯 Goals
 
 - Build an API RESTFul based on the JS ecosystem following the given statements.
+- Document the API.
 - Dockerize the implementation.
 - Add some **integration test** to check if everything is ok.
 
@@ -17,7 +18,7 @@ This is a conceptual test that put into practice the following core technologies
 
 - Adopt TypeScript.
 - Add unit tests.
-- Protect routes (Authotization and Authentication).
+- Protect routes (Authorization and Authentication).
 - Prepare the implementation to be deployed.
 - Adopt an event-driven approach or caching strategy.
 
@@ -25,7 +26,7 @@ This is a conceptual test that put into practice the following core technologies
 
 Write an API that will be queried by two services: **X and Y services**.
 
-The **X service** will need to keep in sync the list of Couriers in the platform as well as their max capacity (in liters).
+The **X service** will need to keep in sync with the list of Couriers in the platform and their max capacity (in liters).
 
 ````javascript
 curl -X POST http://localhost:3000/couriers --data '
@@ -34,7 +35,7 @@ curl -X POST http://localhost:3000/couriers --data '
 }'
 ````
 
-The **Y service** will need to query this API to find out which couriers do have available space.
+The **Y service** will need to query this API to determine which couriers have available space.
 
 ````javascript
 curl -X GET http://localhost:3000/couriers/lookup --data '
@@ -43,7 +44,7 @@ curl -X GET http://localhost:3000/couriers/lookup --data '
 }'
 ````
 
-Write the API that will allow adding, removing and updating couriers' capacities, and that will let lookup a list of couriers whose capacity is greater or equal to the one required.
+Write the API that will allow adding, removing, and updating couriers' capacities, and that will let lookup a list of couriers whose capacity is greater or equal to the one required.
 
 ## How to run the project
 
@@ -52,7 +53,7 @@ The project requires [Node.js](https://nodejs.org/), [MongoDB](https://www.mongo
 Clone the repository:
 
 ```shell
-git clone https://github.com/christianjtr/{REPO_NAME_HERE}.git
+git clone https://github.com/christianjtr/express-api-mongodb-docker-jest-supertest.git
 ```
 
 Environment variables:
@@ -67,11 +68,11 @@ Environment variables:
 | `MONGODB_PORT` | `27017` |
 | `MONGODB_DB` | `<YOUR_DATABASE_NAME>` |
 
-> You can modify the variables in accordance with your preferences at ***.env*** and ***.env.test*** files
+> You can modify the variables by your preferences at ***.env*** and ***.env.test*** files
 
 ###### Start the application
 
-Initialize `Docker`, pulls down the images, creates, and builds the containers.
+Initialize `Docker`, pull down the images, create, and build the containers.
 
 ```shell
 npm run app:start
@@ -87,7 +88,7 @@ npm run app:stop
 
 ###### Start server application (Non-dockerized version)
 
-In order to run the application without using `Docker`, you will need to install **MongoDB Community Version: 4.4** in your OS System.
+To run the application without using `Docker`, you will need to install **MongoDB Community Version: 4.4** in your OS System.
 
 ```shell
 npm run server:start
@@ -198,7 +199,7 @@ URI: {BaseURI}/couriers/lookup/:capacity_required
 ````
 
 ##### Lookup
-Request data from this API to find out which couriers do have available space. (Greater or equals than the requested capacity)
+Request data from this API to determine which couriers have available space. (Greater or equals to the requested capacity)
 ###### Example cURL
 ```javascript
 $ curl --location 'http://localhost:3001/api/v1/couriers/lookup/700'
